@@ -43,10 +43,6 @@ def update_grid(_grid, T, beta):
     apply_rule(random_person,random_neighbour,T,beta)
     return _grid
 
-def plot_timestep(timestep):
-    # plot the grid at the given timestep
-    pass
-
 
 def get_scatter_values(float_list: list):
     y_values = []
@@ -67,7 +63,7 @@ def plot_hist(ax, grid):
 
 def plot_scatter(ax, opinon_list):
     timestep_values, opinion_values = get_scatter_values(opinon_list)
-    ax.scatter(timestep_values,opinion_values, color ="red") 
+    ax.scatter(timestep_values,opinion_values, color ="red",s=20) 
     ax.set_ylim([0,1])
     ax.set_ylabel("Opinion")
     ax.set_xlabel("Timestep")
@@ -77,20 +73,20 @@ def main(T=0.2, beta=0.2,size=20):
     grid = generate_1d_grid(size)
     opinions_list = [[grid[i].opinion for i in range(0, len(grid) - 1)]]
     for timestep in range(100):
-        grid = update_grid(grid,T,beta)
+        for n in range(len(grid)-1):
+            grid = update_grid(grid,T,beta)
         opinions_list.append([grid[i].opinion for i in range(0,len(grid)-1)])
         # 2d list of floats, each nthlist contains the opinions for timestep n.
     # update grid for 100 time steps
         
-
     fig, axs = plt.subplots(1,2)
     plot_hist(axs[0],grid)
     plot_scatter(axs[1],opinions_list)
-    title = str("Threshold = "  +str(T) +", beta = " +str(beta))
-    fig.suptitle(title)
+    fig_title = str("Coupling : " + str(beta) + ", Threshold : " + str(T))
+    fig.suptitle(fig_title)
     plt.show()
 
 
 # run main function
 if __name__ == "__main__":
-    main()
+    main(0.5,0.5,100)
