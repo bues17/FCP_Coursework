@@ -18,7 +18,7 @@ def apply_rule(person: Person, neighbour: Person, T, beta):
     # apply mathematical function between neighbour and person as specified in the question.
     x_i = person.opinion
     x_j = neighbour.opinion
-    if x_i - x_j < T:
+    if abs(x_i - x_j) < T: # abs takes the magnitude of what is passed in.
         person.opinion = x_i + beta * (x_j - x_i)
         neighbour.opinion = x_j + beta * (x_i - x_j)
     pass
@@ -68,13 +68,13 @@ def plot_scatter(ax, opinon_list):
     ax.set_ylabel("Opinion")
     ax.set_xlabel("Timestep")
 
-def main(T=0.2, beta=0.2,size=20):
+def main(T=0.2, coupling=0.2,size=20):
     # generate grid
     grid = generate_1d_grid(size)
     opinions_list = [[grid[i].opinion for i in range(0, len(grid) - 1)]]
     for timestep in range(100):
         for n in range(len(grid)-1):
-            grid = update_grid(grid,T,beta)
+            grid = update_grid(grid,T,coupling)
         opinions_list.append([grid[i].opinion for i in range(0,len(grid)-1)])
         # 2d list of floats, each nthlist contains the opinions for timestep n.
     # update grid for 100 time steps
@@ -82,7 +82,7 @@ def main(T=0.2, beta=0.2,size=20):
     fig, axs = plt.subplots(1,2)
     plot_hist(axs[0],grid)
     plot_scatter(axs[1],opinions_list)
-    fig_title = str("Coupling : " + str(beta) + ", Threshold : " + str(T))
+    fig_title = str("Coupling : " + str(coupling) + ", Threshold : " + str(T))
     fig.suptitle(fig_title)
     plt.show()
 
