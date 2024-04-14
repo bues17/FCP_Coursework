@@ -8,13 +8,31 @@ class Person:
 
 
 def generate_1d_grid(number_neighbours):
+    '''
+    Input : The number of neighbours in the grids - otherwise known as the size of the 1D grid.
+    Returns : A grid of Person objects, each with a random 'opinion', of size specified by the input.
+    '''
     return [generate_neighbour(i) for i in range(0,number_neighbours-1)]
 
 def generate_neighbour(pos):
+    '''
+    Inputs : The position at which a Person is to be generated / created.
+    Returns : A Person object with the given position and a random opinion.
+    '''
     opinion = random.random()
     return Person(opinion,pos)
 
 def apply_rule(person: Person, neighbour: Person, T, beta):
+    '''
+    Inputs : 
+        Person : Person object
+        Neighbour : Person object
+        Threshold : The Threshold parameter
+            Increasing this will decrease the range of opinions within a 'group of people'
+        beta : The coupling parameter.
+          Increasing this will increase the likeliehood of there being more 'groups of people' with a similar opinion
+    This procedure applies the mathematical function between the two 'people' as specified in the assignment
+    '''
     # apply mathematical function between neighbour and person as specified in the question.
     x_i = person.opinion
     x_j = neighbour.opinion
@@ -24,10 +42,16 @@ def apply_rule(person: Person, neighbour: Person, T, beta):
     pass
 
 def decide_rand_neighbour(person : Person, _grid : list):
-    # if at left side of grid, choose right neighbour
+    '''
+    Inputs :
+        person : Person object
+        _grid : A 1d list of person objects.
+    Returns : A person object that is directly next to the previously passed in person object, chosen at random.
+    '''
+    # if at beginning ( left side ) of grid, choose right neighbour
     if person.position == 0:
         random_neighbour_index = 2
-    # if at right side of grid, choose left neighbour
+    # if at end ( right side ) of grid, choose left neighbour
     elif person.position == len(_grid)-1:
         random_neighbour_index = len(_grid)-2
     # else randomly choose between the left and right neighbour:
@@ -36,7 +60,13 @@ def decide_rand_neighbour(person : Person, _grid : list):
     return _grid[random_neighbour_index]
 
 def update_grid(_grid, T, beta):
-    # choose random person and for him, a random neighbour (left or right)
+    '''
+    Inputs:
+        _grid : A 1d list of person objects.
+        Threshold : Stores the value for the Threshold value specified in the assignment.
+        beta : Stores the value for the 'coupling parameter'.
+    '''
+    # choose random person and for them, a random neighbour (left or right)
     random_person = random.choice(_grid)
     random_neighbour = decide_rand_neighbour(random_person,_grid)
     # apply rule to them.
@@ -45,6 +75,16 @@ def update_grid(_grid, T, beta):
 
 
 def get_scatter_values(float_list: list):
+    '''
+    Input :
+        float_list : A 2d list of lists of floats.
+    Returns : 
+        x_values : 1d list of x-coordinates.
+        y_values : 1d list of the corresponding y-coordinates.
+    
+    Each float value in a given 1d list must go at x = n on the graph , where n is the index for that list ( within the 2d list ).
+    The y coordinates will be the float value itself.
+    '''
     y_values = []
     x_values = []
 
@@ -55,6 +95,11 @@ def get_scatter_values(float_list: list):
     return x_values,y_values
 
 def plot_hist(ax, grid):
+    '''
+    Inputs :
+        ax : a matplotlib.pyplot.Axes object, which denotes where the graph will go on the larger figure.
+        grid : 1d list of Person objects.
+    '''
     final_opinions = [grid[i].opinion for i in range(0,len(grid)-1)]
     ax.hist(final_opinions)
     ax.set_xlim([0, 1])
@@ -62,6 +107,11 @@ def plot_hist(ax, grid):
 
 
 def plot_scatter(ax, opinon_list):
+    '''
+    Inputs :
+        ax : a matplotlib.pyplot.Axes object, which denotes where the graph will go on the larger figure.
+        opinion_list : 2d list containing the opinion values of each person, for each timestep.
+    '''
     timestep_values, opinion_values = get_scatter_values(opinon_list)
     ax.scatter(timestep_values,opinion_values, color ="red",s=20) 
     ax.set_ylim([0,1])
